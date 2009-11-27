@@ -1,0 +1,135 @@
+<project name="ScalaAntFun" default="build" xmlns:ivy="antlib:org.apache.ivy.ant">
+    <!-- 
+        this build file is a self contained project: it doesn't require anything else 
+        that ant 1.6.2 or greater and java 1.4 or greater properly installed.
+        
+	Customized for our uses in ScalaAntFun.        
+-->
+	
+	<!-- here is the version of ivy we will use. change this property to try a newer 
+         version if you want -->
+	<property name="ivy.install.version" value="2.0.0-beta1" />
+	<property name="ivy.jar.dir" value="${basedir}/ivy" />
+	<property name="ivy.jar.file" value="${ivy.jar.dir}/ivy.jar" />
+	<property name="lib.dir" value="lib" />
+	
+
+    <property name="build.dir" value="build" />
+    <property name="src.dir" value="src" />
+    
+    <path id="lib.path.id">
+        <fileset dir="${lib.dir}" />
+	</path>
+
+    <path id="run.path.id">
+        <path refid="lib.path.id" />
+    	<pathelement location="${build.dir}"/>
+
+
+    </path>	
+    
+    <target name="download-ivy" unless="skip.download">
+    	<mkdir dir="${ivy.jar.dir}"/>
+		<!-- download Ivy from web site so that it can be used even without any special installation -->
+		<echo message="installing ivy..."/>
+    	<get src="http://repo1.maven.org/maven2/org/apache/ivy/ivy/${ivy.install.version}/ivy-${ivy.install.version}.jar"
+    		 dest="${ivy.jar.file}" usetimestamp="true"/>
+    </target>
+    
+    <!-- ================================= 
+          target: install-ivy         
+            this target is not necessary if you put ivy.jar in your ant lib directory
+         ================================= -->
+    <target name="install-ivy" depends="download-ivy" description="--> install ivy">
+    	<!-- try to load ivy here from local ivy dir, in case the user has not already dropped
+    	      it into ant's lib dir (note that the latter copy will always take precedence).
+    	      We will not fail as long as local lib dir exists (it may be empty) and
+    	      ivy is in at least one of ant's lib dir or the local lib dir. -->
+    	<path id="ivy.lib.path">
+    	    <fileset dir="${ivy.jar.dir}" includes="*.jar"/>
+    	</path>
+    	<taskdef resource="org/apache/ivy/ant/antlib.xml"
+    	          uri="antlib:org.apache.ivy.ant" classpathref="ivy.lib.path"/>
+    </target>
+
+   <target name="init-scala" depends="resolve">
+    <taskdef resource="scala/tools/ant/antlib.xml">
+        <classpath>
+        	<fileset file="${lib.dir}/scala*.jar" />
+    	</classpath>
+    </taskdef>
+   	
+    <taskdef name="scalatest" classname="org.scalatest.tools.ScalaTestTask">
+        <classpath>
+        	<fileset file="${lib.dir}/scala*.jar" />
+    	</classpath>
+    </taskdef>
+  </target>
+
+    <!-- ================================= 
+          target: resolve              
+         ================================= -->
+    <target name="resolve" description="--> retreive dependencies with ivy" depends="install-ivy">
+        <ivy:retrieve/>
+    </target>   
+	
+    <target name="build" depends="init-scala" description="--> compile the project" unless="skipBuild">
+        <mkdir dir="${build.dir}" />
+        <javac srcdir="${src.dir}" destdir="${build.dir}" classpathref="lib.path.id" />
+    	
+    	<scalac srcdir="${src.dir}"
+    	            destdir="${build.dir}"
+    	            classpathref="lib.path.id"
+    	            force="changed">
+    	      <include name="**/*.scala"   />
+	    </scalac>
+    </target>
+	
+	<target name="test" depends="build">
+		  <scalatest runpath="build">
+		  	<reporter type="stdout"/>
+		  	<wildcard package="com.agilehorizon.foolery"/>
+		  	<wildcard package="game"/>
+		  </scalatest>
+    </target>
+	
+    <target name="rerun" description="--> re-run the project, no build" >
+        <java classname="game.ui.ProcessingGameUI" classpathref="run.path.id" fork="true">
+            <arg value="game.ui.ProcessingGameUI" />
+        </java>
+    </target>
+	
+    <target name="run" depends="build,rerun" description="--> run the project" />
+
+    <target name="testGui" depends="build" description="run the tests with a graphical and text reporter">
+		  <scalatest runpath="build">
+		    <reporter type="graphic"/>
+		  	<reporter type="stdout"/>
+		  	<wildcard package="com.agilehorizon.foolery"/>
+		  </scalatest>
+    </target>
+	
+    <!-- ================================= 
+          target: clean              
+         ================================= -->
+    <target name="clean" description="--> clean the project">
+        <delete includeemptydirs="true" quiet="true">
+            <fileset dir="${build.dir}" />
+    	</delete>
+    </target>
+	
+    <!-- ================================= 
+          target: clean-ivy              
+         ================================= -->
+	<target name="clean-ivy" description="--> clean the ivy installation">
+		<delete dir="${ivy.jar.dir}"/>
+	</target>
+	
+    <!-- ================================= 
+          target: clean-cache              
+         ================================= -->
+	<target name="clean-cache" depends="install-ivy" 
+			description="--> clean the ivy cache">
+		<ivy:cleancache />
+	</target>
+</project>

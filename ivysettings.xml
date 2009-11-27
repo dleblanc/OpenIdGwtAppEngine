@@ -1,0 +1,21 @@
+<!-- NOTE: see http://blogs.steeplesoft.com/dependency-management-with-ant-and-ivy/ for a good eample blog of this -->
+
+<ivysettings>
+    <settings defaultResolver="chained"/>
+    <property name="java.net.maven.pattern" value="[organisation]/jars/[module]-[revision].[ext]"/>
+    
+    <resolvers>
+        <chain name="chained" returnFirst="true">
+            <ibiblio name="ibiblio" m2compatible="true"/>
+            <ibiblio name="java-net-maven2" root="http://download.java.net/maven/2/" m2compatible="true"/>
+            <ibiblio name="oauth" root="http://oauth.googlecode.com/svn/code/maven" m2compatible="true"/>
+            <ibiblio name="step2" root="http://step2.googlecode.com/svn/code/java/maven" m2compatible="true"/>
+            <ibiblio name="ibiblio-mirror" root="http://mirrors.ibiblio.org/pub/mirrors/maven2" m2compatible="true"/>
+
+            <url name="sourceforge">
+                <artifact pattern="http://easynews.dl.sourceforge.net/sourceforge/[organization]/[module]_[revision].zip" />
+                <artifact pattern="http://easynews.dl.sourceforge.net/sourceforge/[organization]/[module]-[revision].zip" />
+            </url>
+        </chain>
+    </resolvers>
+</ivysettings>

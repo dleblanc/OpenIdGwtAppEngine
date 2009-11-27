@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<project xmlns:ivy="antlib:org.apache.ivy.ant" name="GTrax" default="build" basedir=".">
+	<!-- Configure path to GWT SDK -->
+	<property environment="env"/>
+
+    <property name="ivy.install.version" value="2.1.0" />
+    <property name="ivy.jar.dir" value="${basedir}/ivy" />
+    <property name="ivy.jar.file" value="${ivy.jar.dir}/ivy.jar" />
+	<property name="ivy.checksums" value="" />
+
+	<target name="install-ivy" description="--> install ivy">
+        <!-- try to load ivy here from local ivy dir, in case the user has not already dropped
+              it into ant's lib dir (note that the latter copy will always take precedence).
+              We will not fail as long as local lib dir exists (it may be empty) and
+              ivy is in at least one of ant's lib dir or the local lib dir. -->
+        <path id="ivy.lib.path">
+            <fileset dir="${ivy.jar.dir}" includes="*.jar"/>
+        </path>
+        <taskdef resource="org/apache/ivy/ant/antlib.xml"
+                  uri="antlib:org.apache.ivy.ant" classpathref="ivy.lib.path"/>
+    </target>
+
+    <target name="retrieve" description="--> retreive dependencies with ivy" depends="install-ivy">
+    	<ivy:retrieve pattern="war/WEB-INF/lib/[artifact]-[revision].[ext]" symlink="false" type="jar"/>
+    </target>  
+    	
+	<target name="no-gwt-location" unless="gwt.sdk">
+		<echo message="Please set the GWT_HOME environment variable, or pass -Dgwt.sdk=path_to_gwt_sdk_trunk to ant"/>
+		<fail/>
+	</target>
+
+	<target name="init-gwt-location" if="env.GWT_HOME">
+		<property name="gwt.sdk" location="${env.GWT_HOME}" />
+		<echo message="location of gwt home from env: ${gwt.sdk}" />
+	</target>
+
+	<target name="init" depends="init-gwt-location, no-gwt-location, retrieve"/>
+
+
+	<target name="libs" description="Copy libs to WEB-INF/lib" depends="init">
+		<mkdir dir="war/WEB-INF/lib" />
+		<mkdir dir="test-classes" />
+    	
+    	<!-- TODO: do we need to clobber the servlet jar? -->
+		<copy todir="war/WEB-INF/lib" file="${gwt.sdk}/gwt-servlet.jar" />
+		<!-- Add any additional server libs that need to be copied -->
+
+		<path id="project.class.path">
+			<pathelement location="war/WEB-INF/classes"/>
+			<pathelement location="${gwt.sdk}/gwt-user.jar"/>
+			<fileset dir="${gwt.sdk}" includes="gwt-dev*.jar"/>
+
+			<!-- Add any additional non-server libs (such as JUnit) -->
+			<fileset dir="war/WEB-INF/lib" includes="**/*.jar"/>
+			<fileset dir="testlibs" includes="**/*.jar"/>
+				
+			<pathelement location="test-classes"/>
+		</path>
+	</target>
+
+	<target name="javac" depends="libs" description="Compile java source">
+		<mkdir dir="war/WEB-INF/classes" />
+		<javac srcdir="src" includes="**" encoding="utf-8" destdir="war/WEB-INF/classes" source="1.5" target="1.5" nowarn="true" debug="true" debuglevel="lines,vars,source">
+			<classpath refid="project.class.path" />
+		</javac>
+		
+		<!-- Compile the tests -->
+		<javac srcdir="test" includes="**" encoding="utf-8" destdir="test-classes" source="1.5" target="1.5" nowarn="true" debug="true" debuglevel="lines,vars,source">
+			<classpath refid="project.class.path" />
+		</javac>
+
+			
+		<copy todir="war/WEB-INF/classes">
+			<fileset dir="src" excludes="**/*.java" />
+		</copy>
+	</target>
+
+	<target name="gwtc" depends="javac" description="GWT compile to JavaScript">
+		<java failonerror="true" fork="true" classname="com.google.gwt.dev.Compiler">
+			<classpath>
+				<pathelement location="src"/>
+				<path refid="project.class.path"/>
+			</classpath>
+			<!-- add jvmarg -Xss16M or similar if you see a StackOverflowError -->
+			<jvmarg value="-Xmx256M"/>
+			<!-- Additional arguments like -style PRETTY or -logLevel DEBUG -->
+			<arg value="com.norex.openidtest.OpenIdTest"/>
+		</java>
+	</target>
+
+	<target name="devMode" depends="javac" description="Run development mode">
+		<java failonerror="true" fork="true" classname="com.google.gwt.dev.DevMode">
+			<classpath>
+				<pathelement location="src"/>
+				<path refid="project.class.path"/>
+			</classpath>
+			<jvmarg value="-Xmx256M"/>
+			<arg value="-startupUrl"/>
+			<arg value="OpenIdTest.html"/>
+			<!-- Additional arguments like -style PRETTY or -logLevel DEBUG -->
+			<arg value="com.norex.gtrax.GTrax"/>
+		</java>
+	</target>
+
+	<target name="build" depends="gwtc" description="Build this project" />
+
+	<target name="war" depends="build" description="Create a war file">
+		<zip destfile="GTrax.war" basedir="war"/>
+	</target>
+
+	<target name="test" depends="javac" description="run the tests">
+		<mkdir dir="test-results"/>
+		<junit printsummary="true" failureproperty="junit.failure" filtertrace="true" fork="true" timeout="120000" maxmemory="500M">
+			<classpath refid="project.class.path" />
+
+			<!-- unfortunately we just compile our tests into the war classes dir for now -->
+			<batchtest todir="test-results">
+				<fileset dir="test-classes">
+					<include name="**/*Test*.class"/>
+					<exclude name="**/*GwtTest*.class"/>
+				</fileset>
+				<formatter type="xml" />
+			</batchtest>
+		</junit>
+		<fail message="Test failed!!!" if="junit.failure" />
+	</target>
+
+	<target name="clean" description="Cleans this project">
+		<delete dir="war/WEB-INF/classes" failonerror="false" />
+		<delete dir="war/gtrax" failonerror="false" />
+		
+		<delete dir="test-results" failonerror="false" />
+		<delete dir="test-classes" failonerror="false" />
+	</target>
+
+</project>

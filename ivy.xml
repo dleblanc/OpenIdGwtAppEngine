@@ -1,0 +1,21 @@
+<ivy-module version="2.0">
+    <info organisation="norex" module="OpenIdTest"/>
+
+    <dependencies>
+        <dependency org="junit" name="junit" rev="4.7"/>
+        <dependency org="org.openid4java" name="openid4java" rev="0.9.5"/>
+        <dependency org="org.openid4java" name="openid4java-xri" rev="0.9.5"/>
+        <dependency org="com.google.code.guice" name="guice" rev="1.0"/>
+        <dependency org="net.oauth" name="oauth-core" rev="20090121"/>
+        <dependency org="com.google.step2" name="step2-consumer" rev="1-SNAPSHOT"/> <!-- TODO: it'd be really nice to nail it down to 1 version -->
+
+<!--
+        <dependency org="com.google.gdata" name="gdata.core" rev="1.0"/>
+        <dependency org="com.google.gdata" name="gdata.contacts" rev="2.0"/>
+-->
+    
+<!--  TODO: add a bunch of test deps -->
+    </dependencies>
+
+</ivy-module>
+
