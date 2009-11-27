@@ -2,6 +2,7 @@ package com.norex.openidtest.client;
 
 import com.google.gwt.core.client.*;
 import com.google.gwt.event.dom.client.*;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.*;
 
@@ -23,25 +24,20 @@ public class OpenIdTest implements EntryPoint {
 	private final GreetingServiceAsync greetingService = GWT
 			.create(GreetingService.class);
 
+	private final LoginServiceAsync loginService = GWT
+		.create(LoginService.class);
+
 	/**
 	 * This is the entry point method.
 	 */
 	public void onModuleLoad() {
-		final Button sendButton = new Button("Send");
-		final TextBox nameField = new TextBox();
-		nameField.setText("GWT User");
-
-		// We can add style names to widgets
-		sendButton.addStyleName("sendButton");
-
-		// Add the nameField and sendButton to the RootPanel
-		// Use RootPanel.get() to get the entire body element
-		RootPanel.get("nameFieldContainer").add(nameField);
-		RootPanel.get("sendButtonContainer").add(sendButton);
-
-		// Focus the cursor on the name field when the app loads
-		nameField.setFocus(true);
-		nameField.selectAll();
+		
+		boolean loggedIn = "true".equals(Window.Location.getParameter("loggedIn"));
+		
+		if (!loggedIn) {
+			showLoginPrompt();
+			return;
+		}
 
 		// Create the popup dialog box
 		final DialogBox dialogBox = new DialogBox();
@@ -66,64 +62,46 @@ public class OpenIdTest implements EntryPoint {
 		closeButton.addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent event) {
 				dialogBox.hide();
-				sendButton.setEnabled(true);
-				sendButton.setFocus(true);
 			}
 		});
 
-		// Create a handler for the sendButton and nameField
-		class MyHandler implements ClickHandler, KeyUpHandler {
-			/**
-			 * Fired when the user clicks on the sendButton.
-			 */
-			public void onClick(ClickEvent event) {
-				sendNameToServer();
+		greetingService.doSomethingInteresting(new AsyncCallback<String>() {
+			public void onFailure(Throwable caught) {
+				// Show the RPC error message to the user
+				dialogBox
+						.setText("Remote Procedure Call - Failure");
+				serverResponseLabel
+						.addStyleName("serverResponseLabelError");
+				serverResponseLabel.setHTML(SERVER_ERROR);
+				dialogBox.center();
+				closeButton.setFocus(true);
 			}
 
-			/**
-			 * Fired when the user types in the nameField.
-			 */
-			public void onKeyUp(KeyUpEvent event) {
-				if (event.getNativeKeyCode() == KeyCodes.KEY_ENTER) {
-					sendNameToServer();
-				}
+			public void onSuccess(String result) {
+				dialogBox.setText("Remote claimed identifier");
+				serverResponseLabel
+						.removeStyleName("serverResponseLabelError");
+				serverResponseLabel.setHTML("claimed identifier: " + result);
+				dialogBox.center();
+				closeButton.setFocus(true);
 			}
+		});
+		
+	}
 
-			/**
-			 * Send the name from the nameField to the server and wait for a response.
-			 */
-			private void sendNameToServer() {
-				sendButton.setEnabled(false);
-				String textToServer = nameField.getText();
-				textToServerLabel.setText(textToServer);
-				serverResponseLabel.setText("");
-				greetingService.getRedirectUrl(textToServer, new AsyncCallback<String>() {
-					public void onFailure(Throwable caught) {
-						// Show the RPC error message to the user
-						dialogBox
-								.setText("Remote Procedure Call - Failure");
-						serverResponseLabel
-								.addStyleName("serverResponseLabelError");
-						serverResponseLabel.setHTML(SERVER_ERROR);
-						dialogBox.center();
-						closeButton.setFocus(true);
-					}
+	private void showLoginPrompt() {
+		String email = Window.prompt("Not logged in - will try now. What is your email?", "dave.leblanc@norex.ca");
 
-					public void onSuccess(String result) {
-						dialogBox.setText("Remote Procedure Call");
-						serverResponseLabel
-								.removeStyleName("serverResponseLabelError");
-						serverResponseLabel.setHTML(result);
-						dialogBox.center();
-						closeButton.setFocus(true);
-					}
-				});
+		loginService.loginAndGetAddressToRedirectTo(email, new AsyncCallback<AuthRedirectInfo>() {
+			@Override
+			public void onSuccess(AuthRedirectInfo result) {
+				Window.Location.assign(result.getRedirectTo());
 			}
-		}
-
-		// Add a handler to send the name to the server
-		MyHandler handler = new MyHandler();
-		sendButton.addClickHandler(handler);
-		nameField.addKeyUpHandler(handler);
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				Window.alert("login failed, exception: " + caught.getMessage());
+			}
+		});
 	}
 }

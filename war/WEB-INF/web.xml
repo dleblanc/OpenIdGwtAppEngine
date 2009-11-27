@@ -4,32 +4,50 @@
     "http://java.sun.com/dtd/web-app_2_3.dtd">
 
 <web-app>
-  <listener>
-    <listener-class>com.google.step2.servlet.GuiceServletContextListener</listener-class>
-  </listener>
-  
-  <context-param>
-    <param-name>guice-modules</param-name>
-    <param-value>
-      com.norex.openidtest.server.GuiceModule
+	<context-param>
+		<param-name>guice-modules</param-name>
+		<param-value>
+			com.norex.openidtest.server.GuiceModule
     </param-value>
-  </context-param>
-  
-  
-  <!-- Servlets -->
-  <servlet>
-    <servlet-name>greetServlet</servlet-name>
-    <servlet-class>com.norex.openidtest.server.GreetingServiceImpl</servlet-class>
-  </servlet>
-  
-  <servlet-mapping>
-    <servlet-name>greetServlet</servlet-name>
-    <url-pattern>/openidtest/greet</url-pattern>
-  </servlet-mapping>
-  
-  <!-- Default page to serve -->
-  <welcome-file-list>
-    <welcome-file>OpenIdTest.html</welcome-file>
-  </welcome-file-list>
+	</context-param>
+
+	<filter>
+		<filter-name>AuthFilter</filter-name>
+		<filter-class>com.norex.openidtest.server.AuthFilter</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>AuthFilter</filter-name>
+		<url-pattern>/openidtest/*</url-pattern>
+	</filter-mapping>
+
+	<listener>
+		<listener-class>com.google.step2.servlet.GuiceServletContextListener</listener-class>
+	</listener>
+	
+	<!-- Servlets -->
+	<servlet>
+		<servlet-name>greetServlet</servlet-name>
+		<servlet-class>com.norex.openidtest.server.GreetingServiceImpl</servlet-class>
+	</servlet>
+
+	<servlet>
+		<servlet-name>loginServlet</servlet-name>
+		<servlet-class>com.norex.openidtest.server.LoginServlet</servlet-class>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>loginServlet</servlet-name>
+		<url-pattern>/openidtest/login</url-pattern>
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>greetServlet</servlet-name>
+		<url-pattern>/openidtest/greet</url-pattern>
+	</servlet-mapping>
+
+	<!-- Default page to serve -->
+	<welcome-file-list>
+		<welcome-file>OpenIdTest.html</welcome-file>
+	</welcome-file-list>
 
 </web-app>
