@@ -35,6 +35,11 @@
 		<servlet-class>com.norex.openidtest.server.LoginServlet</servlet-class>
 	</servlet>
 
+	<servlet>
+		<servlet-name>verifyLoginRedirectServlet</servlet-name>
+		<servlet-class>com.norex.openidtest.server.VerifyLoginRedirectServlet</servlet-class>
+	</servlet>
+
 	<servlet-mapping>
 		<servlet-name>loginServlet</servlet-name>
 		<url-pattern>/openidtest/login</url-pattern>
@@ -43,6 +48,11 @@
 	<servlet-mapping>
 		<servlet-name>greetServlet</servlet-name>
 		<url-pattern>/openidtest/greet</url-pattern>
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>verifyLoginRedirectServlet</servlet-name>
+		<url-pattern>/openidtest/verifyLoginRedirect</url-pattern>
 	</servlet-mapping>
 
 	<!-- Default page to serve -->

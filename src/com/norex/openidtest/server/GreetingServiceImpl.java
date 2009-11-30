@@ -1,17 +1,13 @@
 package com.norex.openidtest.server;
 
 import javax.servlet.*;
-
-import org.openid4java.consumer.ConsumerException;
-import org.openid4java.discovery.*;
-import org.openid4java.message.*;
+import javax.servlet.http.Cookie;
 
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 import com.google.inject.*;
-import com.google.step2.*;
-import com.google.step2.discovery.IdpIdentifier;
+import com.google.step2.ConsumerHelper;
 import com.google.step2.servlet.GuiceServletContextListener;
-import com.norex.openidtest.client.*;
+import com.norex.openidtest.client.GreetingService;
 
 /**
  * The server side implementation of the RPC service.
@@ -40,6 +36,13 @@ public class GreetingServiceImpl extends RemoteServiceServlet implements
 	  }
 
 	public String doSomethingInteresting() { // NOTE: email here is an IdP (identity provider)
-		return "This is an interesting call from an authenticated session!";
+		String identityFromCookie = "unknown";
+		for (Cookie cookie : getThreadLocalRequest().getCookies()) {
+			if (AuthFilter.OPENID_IDENTITY_COOKIE.equals(cookie.getName())) {
+				identityFromCookie = cookie.getValue();
+			}
+		}
+		
+		return "This is an interesting call from an authenticated session! Open id identity according to cookie: " + identityFromCookie;
 	}
 }

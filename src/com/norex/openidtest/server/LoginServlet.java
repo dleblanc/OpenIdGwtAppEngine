@@ -25,10 +25,10 @@ LoginService {
 	private ConsumerHelper consumerHelper;
 
 	// Magic to inject members into the servlet - we would normally break this out to a separate place
-	  @Override
-	  public void init(ServletConfig config) throws ServletException {
-	    super.init(config);
-	    ServletContext context = config.getServletContext();
+	@Override
+	public void init(ServletConfig config) throws ServletException {
+		super.init(config);
+		ServletContext context = config.getServletContext();
 	    Injector injector = (Injector)
 	        context.getAttribute(GuiceServletContextListener.INJECTOR_ATTRIBUTE);
 
@@ -66,7 +66,7 @@ LoginService {
 //	    String returnToUrl = new StringBuffer(realm)
 //	        .append(realm).append("/redirected").toString();
 	    String realm = "http://localhost:8888/";
-		String returnToUrl = "http://localhost:8888/OpenIdTest.html?gwt.hosted=192.168.1.151:9997&loggedIn=true";
+		String returnToUrl = "http://localhost:8888/openidtest/verifyLoginRedirect";
 	    
 	    // if the user typed am email address, ignore the user part
 	    String emailSuffix = email.replaceFirst(".*@", "");

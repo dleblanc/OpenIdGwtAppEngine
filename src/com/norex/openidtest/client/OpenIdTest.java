@@ -2,7 +2,7 @@ package com.norex.openidtest.client;
 
 import com.google.gwt.core.client.*;
 import com.google.gwt.event.dom.client.*;
-import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.*;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.*;
 
