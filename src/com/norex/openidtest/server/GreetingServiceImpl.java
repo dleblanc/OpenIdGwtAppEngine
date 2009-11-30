@@ -38,7 +38,7 @@ public class GreetingServiceImpl extends RemoteServiceServlet implements
 	public String doSomethingInteresting() { // NOTE: email here is an IdP (identity provider)
 		String identityFromCookie = "unknown";
 		for (Cookie cookie : getThreadLocalRequest().getCookies()) {
-			if (AuthFilter.OPENID_IDENTITY_COOKIE.equals(cookie.getName())) {
+			if (AuthFilter.CLAIMED_ID_COOKIE_NAME.equals(cookie.getName())) {
 				identityFromCookie = cookie.getValue();
 			}
 		}

@@ -4,6 +4,8 @@
     "http://java.sun.com/dtd/web-app_2_3.dtd">
 
 <web-app>
+
+
 	<context-param>
 		<param-name>guice-modules</param-name>
 		<param-value>
@@ -55,6 +57,10 @@
 		<url-pattern>/openidtest/verifyLoginRedirect</url-pattern>
 	</servlet-mapping>
 
+    <session-config>
+      <session-timeout>1440</session-timeout> <!--  Default session timeout of 1 day.  -->
+    </session-config> 
+    
 	<!-- Default page to serve -->
 	<welcome-file-list>
 		<welcome-file>OpenIdTest.html</welcome-file>
