@@ -1,3 +1,3 @@
 An example showing openid authentication as a google web apps/GWT project.  This is VERY bare bones,
 the classpath probably won't transfer, it almost certainly won't work with anything but google as an
-open id provider, etc. No warranty whatsoever :)
+open id provider, etc. No warranty whatsoever :)  Untested, pretty much crap at this stage :)
