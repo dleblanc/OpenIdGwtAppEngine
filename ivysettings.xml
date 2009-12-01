@@ -11,11 +11,6 @@
             <ibiblio name="oauth" root="http://oauth.googlecode.com/svn/code/maven" m2compatible="true"/>
             <ibiblio name="step2" root="http://step2.googlecode.com/svn/code/java/maven" m2compatible="true"/>
             <ibiblio name="ibiblio-mirror" root="http://mirrors.ibiblio.org/pub/mirrors/maven2" m2compatible="true"/>
-
-            <url name="sourceforge">
-                <artifact pattern="http://easynews.dl.sourceforge.net/sourceforge/[organization]/[module]_[revision].zip" />
-                <artifact pattern="http://easynews.dl.sourceforge.net/sourceforge/[organization]/[module]-[revision].zip" />
-            </url>
-        </chain>
+	</chain>
     </resolvers>
 </ivysettings>

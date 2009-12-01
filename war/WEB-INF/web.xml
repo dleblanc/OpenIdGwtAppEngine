@@ -5,62 +5,25 @@
 
 <web-app>
 
-
-	<context-param>
-		<param-name>guice-modules</param-name>
-		<param-value>
-			com.norex.openidtest.server.GuiceModule
-    </param-value>
-	</context-param>
-
 	<filter>
-		<filter-name>AuthFilter</filter-name>
-		<filter-class>com.norex.openidtest.server.AuthFilter</filter-class>
+		<filter-name>guiceFilter</filter-name>
+		<filter-class>com.google.inject.servlet.GuiceFilter</filter-class>
 	</filter>
+
+
 	<filter-mapping>
-		<filter-name>AuthFilter</filter-name>
-		<url-pattern>/openidtest/*</url-pattern>
+		<filter-name>guiceFilter</filter-name>
+		<url-pattern>/*</url-pattern>
 	</filter-mapping>
 
 	<listener>
-		<listener-class>com.google.step2.servlet.GuiceServletContextListener</listener-class>
+		<listener-class>com.norex.openidtest.GuiceServletConfig</listener-class>
 	</listener>
-	
-	<!-- Servlets -->
-	<servlet>
-		<servlet-name>greetServlet</servlet-name>
-		<servlet-class>com.norex.openidtest.server.GreetingServiceImpl</servlet-class>
-	</servlet>
 
-	<servlet>
-		<servlet-name>loginServlet</servlet-name>
-		<servlet-class>com.norex.openidtest.server.LoginServlet</servlet-class>
-	</servlet>
+	<session-config>
+		<session-timeout>1440</session-timeout> <!--  Default session timeout of 1 day.  -->
+	</session-config>
 
-	<servlet>
-		<servlet-name>verifyLoginRedirectServlet</servlet-name>
-		<servlet-class>com.norex.openidtest.server.VerifyLoginRedirectServlet</servlet-class>
-	</servlet>
-
-	<servlet-mapping>
-		<servlet-name>loginServlet</servlet-name>
-		<url-pattern>/openidtest/login</url-pattern>
-	</servlet-mapping>
-
-	<servlet-mapping>
-		<servlet-name>greetServlet</servlet-name>
-		<url-pattern>/openidtest/greet</url-pattern>
-	</servlet-mapping>
-
-	<servlet-mapping>
-		<servlet-name>verifyLoginRedirectServlet</servlet-name>
-		<url-pattern>/openidtest/verifyLoginRedirect</url-pattern>
-	</servlet-mapping>
-
-    <session-config>
-      <session-timeout>1440</session-timeout> <!--  Default session timeout of 1 day.  -->
-    </session-config> 
-    
 	<!-- Default page to serve -->
 	<welcome-file-list>
 		<welcome-file>OpenIdTest.html</welcome-file>

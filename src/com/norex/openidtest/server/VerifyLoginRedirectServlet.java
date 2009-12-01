@@ -1,20 +1,18 @@
 package com.norex.openidtest.server;
 
 import java.io.IOException;
-import java.util.*;
 
-import javax.servlet.*;
+import javax.servlet.ServletException;
 import javax.servlet.http.*;
 
 import org.openid4java.association.AssociationException;
 import org.openid4java.discovery.*;
 import org.openid4java.message.*;
-import org.openid4java.message.ax.*;
 
 import com.google.inject.*;
 import com.google.step2.*;
 import com.google.step2.AuthResponseHelper.ResultType;
-import com.google.step2.servlet.*;
+import com.google.step2.servlet.InjectableServlet;
 
 /**
  * This servlet is what google redirects to after a succesfull authentication,
@@ -28,22 +26,8 @@ import com.google.step2.servlet.*;
  * AuthFilter for all subsequent (non-static) requests.
  * 
  */
+@Singleton
 public class VerifyLoginRedirectServlet extends InjectableServlet {
-
-	// Magic to inject members into the servlet - we would normally break this
-	// out to a separate place
-	@Override
-	public void init(ServletConfig config) throws ServletException {
-		super.init(config);
-		ServletContext context = config.getServletContext();
-		Injector injector = (Injector) context
-				.getAttribute(GuiceServletContextListener.INJECTOR_ATTRIBUTE);
-
-		if (injector == null) {
-			throw new ServletException("could not find Guice injector");
-		}
-		injector.injectMembers(this);
-	}
 
 	@Inject
 	private ConsumerHelper helper;

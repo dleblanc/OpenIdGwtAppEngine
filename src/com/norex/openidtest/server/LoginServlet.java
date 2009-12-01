@@ -15,6 +15,7 @@ import com.google.step2.servlet.GuiceServletContextListener;
 import com.norex.openidtest.client.*;
 
 @SuppressWarnings("serial")
+@Singleton
 public class LoginServlet extends RemoteServiceServlet implements
 LoginService {
 

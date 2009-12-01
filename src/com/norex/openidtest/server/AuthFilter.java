@@ -5,31 +5,12 @@ import java.io.IOException;
 import javax.servlet.*;
 import javax.servlet.http.*;
 
-import org.openid4java.discovery.DiscoveryInformation;
-
-import com.google.inject.*;
-import com.google.step2.ConsumerHelper;
-import com.google.step2.servlet.GuiceServletContextListener;
-
 public class AuthFilter implements javax.servlet.Filter {
 	public static final String CLAIMED_ID_SESSION_ATTR = "claimedIdentity";
 	public static final String CLAIMED_ID_COOKIE_NAME = "claimedIdentity";
 	
-	private static final String DISCOVERED_INFO_SESSION_ATTR = "discoveredInfo";
-
-	@Inject
-	private ConsumerHelper consumerHelper;
-
 	@Override
 	public void init(FilterConfig config) throws ServletException {
-	    ServletContext context = config.getServletContext();
-	    Injector injector = (Injector)
-	        context.getAttribute(GuiceServletContextListener.INJECTOR_ATTRIBUTE);
-
-	    if (injector == null) {
-	      throw new ServletException("could not find Guice injector");
-	    }
-	    injector.injectMembers(this);
 	}
 
 	@Override
@@ -41,11 +22,10 @@ public class AuthFilter implements javax.servlet.Filter {
 			FilterChain filterChain) throws IOException, ServletException {
 
 		HttpServletRequest httpRequest = (HttpServletRequest) request;
-		HttpSession session = httpRequest.getSession();
 		
 		if (notLoggedIn((HttpServletRequest) request) && !isLoginRequest(httpRequest)) {
 			removeOpenIdIdentityCookie((HttpServletRequest) request, (HttpServletResponse) response);
-			redirectToLoginUrl(response, httpRequest);
+			redirectToLoginUrl(httpRequest, response);
 		}
 		else {
 			// forwrd on to the chain
@@ -86,8 +66,8 @@ public class AuthFilter implements javax.servlet.Filter {
 		return null;
 	}
 
-	private void redirectToLoginUrl(ServletResponse response,
-			HttpServletRequest httpRequest) throws IOException {
+	private void redirectToLoginUrl(HttpServletRequest request,
+			ServletResponse response) throws IOException {
 		HttpServletResponse httpResponse = (HttpServletResponse) response;
 		
 		String baseUrl = "http://localhost:8888/OpenIdTest.html?gwt.hosted=192.168.1.151:9997";

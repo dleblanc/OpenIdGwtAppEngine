@@ -5,7 +5,6 @@ import javax.servlet.http.Cookie;
 
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 import com.google.inject.*;
-import com.google.step2.ConsumerHelper;
 import com.google.step2.servlet.GuiceServletContextListener;
 import com.norex.openidtest.client.GreetingService;
 
@@ -13,13 +12,9 @@ import com.norex.openidtest.client.GreetingService;
  * The server side implementation of the RPC service.
  */
 @SuppressWarnings("serial")
+@Singleton
 public class GreetingServiceImpl extends RemoteServiceServlet implements
 		GreetingService {
-
-	private static final String DISCOVERED_INFO_SESSION_ATTR = "discoveredInfo";
-	
-	@Inject
-	private ConsumerHelper consumerHelper;
 	
 	// Magic to inject members into the servlet - we would normally break this out to a separate place
 	  @Override

@@ -46,7 +46,6 @@
 	<classpathentry kind="lib" path="war/WEB-INF/lib/gdata-youtube-meta-2.0.jar"/>
 	<classpathentry kind="lib" path="war/WEB-INF/lib/geronimo-jpa_3.0_spec-1.1.1.jar"/>
 	<classpathentry kind="lib" path="war/WEB-INF/lib/geronimo-jta_1.1_spec-1.1.1.jar"/>
-	<classpathentry kind="lib" path="war/WEB-INF/lib/guice-1.0.jar"/>
 	<classpathentry kind="lib" path="war/WEB-INF/lib/gwt-servlet.jar"/>
 	<classpathentry kind="lib" path="war/WEB-INF/lib/httpclient-4.0-beta2.jar"/>
 	<classpathentry kind="lib" path="war/WEB-INF/lib/httpcore-4.0-beta3.jar"/>
@@ -83,5 +82,7 @@
 	<classpathentry kind="lib" path="war/WEB-INF/lib/servlet-api-2.5.jar"/>
 	<classpathentry kind="lib" path="war/WEB-INF/lib/step2-common-1-SNAPSHOT.jar"/>
 	<classpathentry kind="lib" path="war/WEB-INF/lib/step2-consumer-1-SNAPSHOT.jar"/>
+	<classpathentry kind="lib" path="war/WEB-INF/lib/guice-2.0.jar"/>
+	<classpathentry kind="lib" path="war/WEB-INF/lib/guice-servlet-2.0.jar"/>
 	<classpathentry kind="output" path="war/WEB-INF/classes"/>
 </classpath>

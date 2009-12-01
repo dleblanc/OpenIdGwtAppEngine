@@ -8,6 +8,8 @@
         <dependency org="com.google.code.guice" name="guice" rev="1.0"/>
         <dependency org="net.oauth" name="oauth-core" rev="20090121"/>
         <dependency org="com.google.step2" name="step2-consumer" rev="1-SNAPSHOT"/> <!-- TODO: it'd be really nice to nail it down to 1 version -->
+        <dependency org="com.google.inject" name="guice" rev="2.0"/>
+        <dependency org="com.google.inject.extensions" name="guice-servlet" rev="2.0"/>
 
 <!--
         <dependency org="com.google.gdata" name="gdata.core" rev="1.0"/>
