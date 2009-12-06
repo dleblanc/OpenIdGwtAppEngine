@@ -5,6 +5,9 @@ import java.io.IOException;
 import javax.servlet.*;
 import javax.servlet.http.*;
 
+import com.google.inject.Singleton;
+
+@Singleton
 public class AuthFilter implements javax.servlet.Filter {
 	public static final String CLAIMED_ID_SESSION_ATTR = "claimedIdentity";
 	public static final String CLAIMED_ID_COOKIE_NAME = "claimedIdentity";
@@ -47,7 +50,7 @@ public class AuthFilter implements javax.servlet.Filter {
 
 	private boolean isLoginRequest(HttpServletRequest httpRequest) {
 		// Obviously very insecure - don't port this to production!
-		return httpRequest.getRequestURI().contains("/login") || httpRequest.getRequestURI().contains("/verifyLogin");
+		return httpRequest.getRequestURI().equalsIgnoreCase("/openidtest/LoginGWT.rpc") || httpRequest.getRequestURI().equalsIgnoreCase("/openidtest/verifyLogin");
 	}
 
 	private boolean notLoggedIn(HttpServletRequest request) {

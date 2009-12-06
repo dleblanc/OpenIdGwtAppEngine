@@ -27,11 +27,10 @@ import com.google.step2.servlet.InjectableServlet;
  * 
  */
 @Singleton
-public class VerifyLoginRedirectServlet extends InjectableServlet {
+public class VerifyLoginRedirectServlet extends HttpServlet {
 
 	@Inject
 	private ConsumerHelper helper;
-	private static final String UNKNOWN = "Unknown";
 
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp)

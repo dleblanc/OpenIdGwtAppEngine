@@ -20,7 +20,7 @@ public class GuiceServletConfig extends GuiceServletContextListener {
 
 	@Override
 	protected Injector getInjector() {
-		return Guice.createInjector();
+		return Guice.createInjector(new OpenIdExampleServletModule());
 	}
 }
 
@@ -29,9 +29,10 @@ class OpenIdExampleServletModule extends ServletModule {
 	protected void configureServlets() {
 		// Configured according to: http://stuffthathappens.com/blog/2009/09/14/guice-with-gwt/
 
-		filter("/openidtest/*").through(AuthFilter.class);
+		//filter("/openidtest/*").through(AuthFilter.class);
 		
 		serve("/openidtest/GWT.rpc").with(GuiceRemoteServiceServlet.class);
+		serve("/openidtest/LoginGWT.rpc").with(GuiceRemoteServiceServlet.class);
 
 		serve("/openidtest/login/*").with(LoginServlet.class);
 		serve("/openidtest/greet/*").with(GreetingServiceImpl.class);
@@ -90,7 +91,7 @@ class OpenIdExampleServletModule extends ServletModule {
 		}
 	}
 
-	class GoogleHostedHostMetaFetcher extends UrlHostMetaFetcher {
+	static class GoogleHostedHostMetaFetcher extends UrlHostMetaFetcher {
 
 		private static final String SOURCE_PARAM = "step2.hostmeta.google.source";
 		private static final String DEFAULT_SOURCE = "https://www.google.com";

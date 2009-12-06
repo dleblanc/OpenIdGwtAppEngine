@@ -2,7 +2,7 @@ package com.norex.openidtest.client;
 
 import com.google.gwt.user.client.rpc.*;
 
-@RemoteServiceRelativePath("GWT.rpc")
+@RemoteServiceRelativePath("LoginGWT.rpc")
 public interface LoginService extends RemoteService {
 	AuthRedirectInfo loginAndGetAddressToRedirectTo(String email);
 }

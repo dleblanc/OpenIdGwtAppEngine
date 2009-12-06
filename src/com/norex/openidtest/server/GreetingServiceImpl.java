@@ -15,22 +15,10 @@ import com.norex.openidtest.client.GreetingService;
 @Singleton
 public class GreetingServiceImpl extends RemoteServiceServlet implements
 		GreetingService {
-	
-	// Magic to inject members into the servlet - we would normally break this out to a separate place
-	  @Override
-	  public void init(ServletConfig config) throws ServletException {
-	    super.init(config);
-	    ServletContext context = config.getServletContext();
-	    Injector injector = (Injector)
-	        context.getAttribute(GuiceServletContextListener.INJECTOR_ATTRIBUTE);
-
-	    if (injector == null) {
-	      throw new ServletException("could not find Guice injector");
-	    }
-	    injector.injectMembers(this);
-	  }
 
 	public String doSomethingInteresting() { // NOTE: email here is an IdP (identity provider)
+		
+		// NOTE: doesn't need to be a RemoteServiceServlet anymore (according to guice docs) - so can do away with thread local stuff.
 		String identityFromCookie = "unknown";
 		for (Cookie cookie : getThreadLocalRequest().getCookies()) {
 			if (AuthFilter.CLAIMED_ID_COOKIE_NAME.equals(cookie.getName())) {
